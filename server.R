@@ -1,0 +1,108 @@
+library(ggplot2)
+
+# Loading dataset
+data <- read.csv("./data/TemperaturesByCountry.csv")
+
+shinyServer(function(input, output, session) {
+        
+        # Calculating the avaliable year's range for selected country
+        observe({
+                country <- input$country
+                min_year <- min(data[data$Country == country, ]$Year)
+                max_year <- max(data[data$Country == country, ]$Year)
+                
+                # Updating the sliderInput control (range of years)
+                updateSliderInput(session, "years",
+                                  min = min_year, max = max_year)
+        })
+
+        # Extracting the data by country name and range of years
+        warming_data <- reactive({
+                
+                # Choosing data for selected country and range of years 
+                temps <- data[data$Country == input$country &
+                              data$Year >= input$years[1] &
+                              data$Year <= input$years[2],]
+
+                # Celsius to Farenheit transformation
+                if (input$tempscale == 2) {
+                        temps$avgTemp <- (9/5)*temps$avgTemp + 32
+                        tempSuff = "F"
+                } else {
+                        tempSuff = "C"
+                }
+                
+                # Temperature at the left and right bounds of the year interval
+                startTemp <- temps[temps$Year == input$years[1], ]$avgTemp
+                endTemp <- temps[temps$Year == input$years[2], ]$avgTemp
+                
+                # Min and max temperatures during the year interval
+                minTemp <- min(temps$avgTemp)
+                maxTemp <- max(temps$avgTemp)
+                
+                list(temperatures = temps,
+                     startTemp = startTemp,
+                     endTemp = endTemp,
+                     minTemp = minTemp,
+                     maxTemp = maxTemp,
+                     suffTemp = tempSuff)
+        })
+        
+        # Plotting the selected data
+        output$warmingPlot <- renderPlot({
+                gg <- ggplot(warming_data()$temperatures,
+                             aes(x = Year, y = avgTemp, colour = avgTemp)) +
+                        geom_point(size = 2) +
+                        scale_colour_gradient(high = "red", low = "blue",
+                                              name = "") +
+                        stat_smooth() +
+                        labs(title = paste0(
+                                input$country, ", ",
+                                input$years[1], " - ", input$years[2], "\n"),
+                             x = "Year",
+                             y = paste0("Annual Average Temperature, ",
+                                        warming_data()$suffTemp,
+                                        "\n")) +
+                        theme(plot.title = element_text(size = 22),
+                              text = element_text(size = 16))
+                print(gg)
+        })
+        
+        # Summing up the data
+        output$titleSummary <- renderText({
+                paste0(input$country, ", ",
+                       input$years[1], " - ", input$years[2])
+        })
+        output$startTemp <- renderText({
+                paste0("- of the ", input$years[1],
+                      ": ", tags$b(paste(round(warming_data()$startTemp, 1),
+                                   warming_data()$suffTemp)))
+        })
+        output$endTemp <- renderText({
+                paste0("- of the ", input$years[2],
+                       ": ", tags$b(paste(round(warming_data()$endTemp, 1),
+                                          warming_data()$suffTemp)))
+        })
+        output$diffTemp <- renderText({
+                paste("- change:",
+                      tags$b(paste(round(warming_data()$endTemp - 
+                                         warming_data()$startTemp, 1),
+                                   warming_data()$suffTemp)))
+        })
+        output$minTemp <- renderText({
+                paste(" - min. temperature:", 
+                      tags$b(paste(round(warming_data()$minTemp, 1),
+                                   warming_data()$suffTemp)))
+        })
+        output$maxTemp <- renderText({
+                paste("- max. temperature:",
+                      tags$b(paste(round(warming_data()$maxTemp, 1),
+                                   warming_data()$suffTemp)))
+        })
+        output$adiffTemp <- renderText({
+                paste("- absolute temperature difference:",
+                      tags$b(paste(round(warming_data()$maxTemp - 
+                                         warming_data()$minTemp, 1),
+                                   warming_data()$suffTemp)))
+        })
+})
