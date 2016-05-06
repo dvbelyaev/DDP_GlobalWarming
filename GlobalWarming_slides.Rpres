@@ -5,7 +5,7 @@
 }
 </style>
 
-Global Warming Data Visualization
+Global Warming's Data Visualization
 ========================================================
 author: Dmitry Belyaev
 date: May 06, 2016
@@ -17,13 +17,13 @@ Problem Description and DataSets
 
 - Global Warming is the increase of the average temperature of Earth's climate system. The term Global Warming is often used to refer to the average temperature of the land surface.
 
-- The described application illustrates the change of the global average land temperature by countries.
+- The described application illustrates the change of the global average temperature in different countries.
 
-- Raw data **GlobalLandTemperaturesByCountry.csv** was taken from the datasets archive available in the Kaggle Datasets repository - https://www.kaggle.com/berkeleyearth/climate-change-earth-surface-temperature-data
+- The raw dataset GlobalLandTemperaturesByCountry.csv was taken from the dataset's archive in the Kaggle Datasets repository - https://www.kaggle.com/berkeleyearth/climate-change-earth-surface-temperature-data.
 
-- Data cleaning and preprocessing (NA's ommiting and calculating the annual average temperatures) was done by the script - https://github.com/dvbelyaev/DDP_GlobalWarming/blob/master/preproc.R
+- Data cleaning and preprocessing (NA's omitting and calculating the annual average temperatures) was done by the script - https://github.com/dvbelyaev/DDP_GlobalWarming/blob/master/preproc.R
 
-Example of the Data Representation
+Example of the Data Visualization
 ========================================================
 left: 55%
 
@@ -76,7 +76,7 @@ maxYear <- median(temps[temps$avgTemp == maxTemp, ]$Year)
 - max. **`r round(maxTemp, 1)` C** in the **`r maxYear`** year
 - difference: **`r round(maxTemp - minTemp, 1)` C**
 
-Global Warming Application
+"Global Warming" Shiny Application
 ========================================================
 left: 70% 
 
@@ -94,11 +94,15 @@ To visualize data:
 
 To get data summary select panel **Summary**
 
-Usefull Links
+Useful Links
 ========================================================
 
-- Many other datasets devoted to the problems of Climate change and Global Warming are avaiable at the Berkeley Earth data page - http://berkeleyearth.org/data/
+- These presentation and application were produced for the homework assignment of Developing Data Products course from Johns Hopkins University - https://www.coursera.org/learn/data-products/
 
-- The source code of the Global Warming application and this presentation is
-avaliable in GitHub - 
-https://github.com/dvbelyaev/DDP_GlobalWarming/
+- The source code of the "Global Warming" application and slides of presentation could be found on GitHub - https://github.com/dvbelyaev/DDP_GlobalWarming/
+
+- The many other datasets devoted to the problems of Climate change and Global Warming are available at the Berkeley Earth data repository - http://berkeleyearth.org/data/
+
+Hope you enjoy using the app.
+
+Thank you!

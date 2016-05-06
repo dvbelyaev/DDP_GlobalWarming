@@ -1,5 +1,3 @@
-# Define UI for application that draws a histogram
-
 # Loading dataset
 data <- read.csv("./data/TemperaturesByCountry.csv")
 
@@ -12,13 +10,14 @@ min_year <- min(data$Year)
 max_year <- max(data$Year)
 
 shinyUI(fluidPage(
+        
         # Application title
         titlePanel("Global Warming"),
 
         # Control panel        
         sidebarLayout(sidebarPanel(
                 
-                # Select country name
+                # Selecting country name
                 selectInput(
                         "country",
                         label = h4("Country:"),
@@ -26,7 +25,7 @@ shinyUI(fluidPage(
                         selected = 1
                 ),
                 
-                # Select range of years for plotting
+                # Selecting range of years for plotting
                 sliderInput(
                         "years",
                         label = h4("Years:"),
@@ -36,7 +35,7 @@ shinyUI(fluidPage(
                         sep = ""
                 ),
                 
-                # Select temperature scale
+                # Selecting temperature scale
                 radioButtons(
                         "tempscale",
                         label = h4("Temperature Scale:"),
@@ -46,32 +45,45 @@ shinyUI(fluidPage(
                 
         ),
         
-                # Plot of temperatures for selected country and time period
-        
         mainPanel(
-                tabsetPanel(type = "tabs", 
+                tabsetPanel(type = "tabs",
+                            
+                            # Ploting the temperatures for selected 
+                            # country and time period
                             tabPanel("Plot",
                                      br(),
-                                     plotOutput("warmingPlot")),
-                            tabPanel(
-                                    "Summary",
-                                    h3(textOutput("titleSummary")),
-                                    br(),
-                                    h4("Relative annual average temperature change:"),
-                                    p(htmlOutput("startTemp")),
-                                    p(htmlOutput("endTemp")),
-                                    p(htmlOutput("diffTemp")),
-                                    br(),
-                                    h4("Absolute annual average temperature change:"),
-                                    p(htmlOutput("minTemp")),
-                                    p(htmlOutput("maxTemp")),
-                                    p(htmlOutput("adiffTemp"))
-                            ),
+                                     plotOutput("warmingPlot")
+                                     ),
+                            
+                            # Summarizing of temperatures change for selected
+                            # country and time period
+                            tabPanel("Summary",
+                                     h3(textOutput("titleSummary")),
+                                     br(),
+                                     h4("Relative annual average temperature change:"),
+                                     p(htmlOutput("startTemp")),
+                                     p(htmlOutput("endTemp")),
+                                     p(htmlOutput("diffTemp")),
+                                     br(),
+                                     h4("Absolute annual average temperature difference:"),
+                                     p(htmlOutput("minTemp")),
+                                     p(htmlOutput("maxTemp")),
+                                     p(htmlOutput("adiffTemp"))
+                                     ),
+                            
+                            # Help panel
                             tabPanel("Help",
-                                     verbatimTextOutput("warmingHelp"))
+                                     br(),
+                                     h3("To visualize data:"),
+                                     p("- open panel ", strong("Plot")),
+                                     p("- select ", strong("Country")),
+                                     p("- choose the interval of ", strong("Years")),
+                                     p("- set the ", strong("Temperature Scale")),
+                                     br(),
+                                     h3("To get data summary:"),
+                                     p("- open panel ", strong("Summary"))
+                                     )
+                            )
                 )
-        )        
-        
-#                 mainPanel(plotOutput("warmingPlot"))
-         )
+        )
 ))

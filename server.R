@@ -5,7 +5,7 @@ data <- read.csv("./data/TemperaturesByCountry.csv")
 
 shinyServer(function(input, output, session) {
         
-        # Calculating the avaliable year's range for selected country
+        # Calculating the available year's range for selected country
         observe({
                 country <- input$country
                 min_year <- min(data[data$Country == country, ]$Year)
@@ -24,7 +24,7 @@ shinyServer(function(input, output, session) {
                               data$Year >= input$years[1] &
                               data$Year <= input$years[2],]
 
-                # Celsius to Farenheit transformation
+                # Celsius to Fahrenheit transformation
                 if (input$tempscale == 2) {
                         temps$avgTemp <- (9/5)*temps$avgTemp + 32
                         tempSuff = "F"
@@ -39,12 +39,16 @@ shinyServer(function(input, output, session) {
                 # Min and max temperatures during the year interval
                 minTemp <- min(temps$avgTemp)
                 maxTemp <- max(temps$avgTemp)
+                minYear <- median(temps[temps$avgTemp == minTemp, ]$Year)
+                maxYear <- median(temps[temps$avgTemp == maxTemp, ]$Year)
                 
                 list(temperatures = temps,
                      startTemp = startTemp,
                      endTemp = endTemp,
                      minTemp = minTemp,
                      maxTemp = maxTemp,
+                     minYear = minYear,
+                     maxYear = maxYear,
                      suffTemp = tempSuff)
         })
         
@@ -74,14 +78,16 @@ shinyServer(function(input, output, session) {
                        input$years[1], " - ", input$years[2])
         })
         output$startTemp <- renderText({
-                paste0("- of the ", input$years[1],
-                      ": ", tags$b(paste(round(warming_data()$startTemp, 1),
-                                   warming_data()$suffTemp)))
+                paste0("- from ",
+                       tags$b(paste(round(warming_data()$startTemp, 1),
+                                    warming_data()$suffTemp),
+                       " in the ", input$years[1]," year"))
         })
         output$endTemp <- renderText({
-                paste0("- of the ", input$years[2],
-                       ": ", tags$b(paste(round(warming_data()$endTemp, 1),
-                                          warming_data()$suffTemp)))
+                paste0("- to ",
+                       tags$b(paste(round(warming_data()$endTemp, 1),
+                                    warming_data()$suffTemp),
+                              " in the ", input$years[2]," year"))
         })
         output$diffTemp <- renderText({
                 paste("- change:",
@@ -90,17 +96,19 @@ shinyServer(function(input, output, session) {
                                    warming_data()$suffTemp)))
         })
         output$minTemp <- renderText({
-                paste(" - min. temperature:", 
+                paste(" - min. ", 
                       tags$b(paste(round(warming_data()$minTemp, 1),
-                                   warming_data()$suffTemp)))
+                                   warming_data()$suffTemp)),
+                      " in the ", tags$b(warming_data()$minYear), " year")
         })
         output$maxTemp <- renderText({
-                paste("- max. temperature:",
+                paste("- max. ",
                       tags$b(paste(round(warming_data()$maxTemp, 1),
-                                   warming_data()$suffTemp)))
+                                   warming_data()$suffTemp)),
+                      " in the ", tags$b(warming_data()$maxYear), " year")
         })
         output$adiffTemp <- renderText({
-                paste("- absolute temperature difference:",
+                paste("- difference:",
                       tags$b(paste(round(warming_data()$maxTemp - 
                                          warming_data()$minTemp, 1),
                                    warming_data()$suffTemp)))

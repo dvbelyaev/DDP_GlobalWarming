@@ -16,4 +16,3 @@ data <- data_raw %>%
 
 # Writing tidy data
 write.csv(data, "./GlobalWarming/data/TemperaturesByCountry.csv")
-
