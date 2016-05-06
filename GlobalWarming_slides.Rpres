@@ -1,0 +1,104 @@
+<style>
+.reveal li {
+    margin-bottom: 0;
+    font-size: 85%;
+}
+</style>
+
+Global Warming Data Visualization
+========================================================
+author: Dmitry Belyaev
+date: May 06, 2016
+
+Developing Data Products - Course Project
+
+Problem Description and DataSets
+========================================================
+
+- Global Warming is the increase of the average temperature of Earth's climate system. The term Global Warming is often used to refer to the average temperature of the land surface.
+
+- The described application illustrates the change of the global average land temperature by countries.
+
+- Raw data **GlobalLandTemperaturesByCountry.csv** was taken from the datasets archive available in the Kaggle Datasets repository - https://www.kaggle.com/berkeleyearth/climate-change-earth-surface-temperature-data
+
+- Data cleaning and preprocessing (NA's ommiting and calculating the annual average temperatures) was done by the script - https://github.com/dvbelyaev/DDP_GlobalWarming/blob/master/preproc.R
+
+Example of the Data Representation
+========================================================
+left: 55%
+
+```{r, echo = FALSE}
+data <- read.csv("./data/TemperaturesByCountry.csv")
+country <- "France"
+startYear <- 1791
+endYear <- 2013
+temps <- data[data$Country == country &
+              data$Year >= startYear & data$Year <= endYear, ]
+
+library(ggplot2)
+gg <- ggplot(temps,
+             aes(x = Year, y = avgTemp, colour = avgTemp)) +
+        geom_point(size = 2) +
+        scale_colour_gradient(high = "red", low = "blue",
+                              name = "") +
+        stat_smooth() +
+        labs(title = paste0(country, ", ", startYear, " - ", endYear, "\n"),
+             x = "Year",
+             y = paste0("Annual Average Temperature, C\n")) +
+        theme(plot.title = element_text(size = 22),
+              text = element_text(size = 16))
+print(gg)
+```
+
+***
+
+```{r, echo = FALSE}
+# Temperature at the left and right bounds of the year interval
+startTemp <- temps[temps$Year == startYear, ]$avgTemp
+endTemp <- temps[temps$Year == endYear, ]$avgTemp
+                
+# Min and max temperatures during the year interval
+minTemp <- min(temps$avgTemp)
+maxTemp <- max(temps$avgTemp)
+minYear <- median(temps[temps$avgTemp == minTemp, ]$Year)
+maxYear <- median(temps[temps$avgTemp == maxTemp, ]$Year)
+```
+
+**Relative annual average temperature change:**
+
+- from **`r round(startTemp, 1)` C** in the **`r startYear`** year
+- to **`r round(endTemp, 1)` C** in the **`r endYear`** year
+- change: **`r round(endTemp - startTemp, 1)` C**
+
+**Absolute annual average temperature difference:**
+
+- min. **`r round(minTemp, 1)` C** in the **`r minYear`** year
+- max. **`r round(maxTemp, 1)` C** in the **`r maxYear`** year
+- difference: **`r round(maxTemp - minTemp, 1)` C**
+
+Global Warming Application
+========================================================
+left: 70% 
+
+![Application screenshot](./images/gw_screen.png)
+
+https://dvbelyaev.shinyapps.io/GlobalWarming/
+
+***
+
+To visualize data:
+
+- select **Country**
+- choose the interval of **Years**
+- set the **Temperature Scale**
+
+To get data summary select panel **Summary**
+
+Usefull Links
+========================================================
+
+- Many other datasets devoted to the problems of Climate change and Global Warming are avaiable at the Berkeley Earth data page - http://berkeleyearth.org/data/
+
+- The source code of the Global Warming application and this presentation is
+avaliable in GitHub - 
+https://github.com/dvbelyaev/DDP_GlobalWarming/

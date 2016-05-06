@@ -15,5 +15,5 @@ data <- data_raw %>%
         summarise(avgTemp = mean(AverageTemperature))
 
 # Writing tidy data
-write.csv(data, "./GlobalLandTemperatures/TemperaturesByCountry.csv")
+write.csv(data, "./GlobalWarming/data/TemperaturesByCountry.csv")
 
